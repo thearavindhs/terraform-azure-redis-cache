@@ -1,22 +1,27 @@
 variable "environment" {
   description = "Environment for resource naming"
   type        = string
+  nullable    = false
 }
 
 variable "default_location" {
   description = "Default location for resources"
   type        = string
+  default     = "eastus"
 }
 
 variable "default_tags" {
   description = "Default tags to be added to resources"
   type        = map(string)
+  default = {
+    terraform = "true"
+  }
 }
 
 variable "redis_cache_name" {
   description = "The name of the Redis cache"
   type        = string
-  default     = "vpc-redis-cache-${var.environment}-${data.random_id.unique_suffix.hex}"
+  nullable    = false
 }
 
 variable "sku_name" {
@@ -61,7 +66,7 @@ variable "patch_schedules" {
       start_hour_utc = 1
     },
     {
-      day_of_week    = "Sunday"   # Saturday 9 PM Eastern
+      day_of_week    = "Sunday" # Saturday 9 PM Eastern
       start_hour_utc = 1
     }
   ]
@@ -70,13 +75,13 @@ variable "patch_schedules" {
 variable "firewall_rules" {
   description = "List of firewall rules for the Redis Cache."
   type = list(object({
-    name       = string
-    start_ip   = string
-    end_ip     = string
+    name     = string
+    start_ip = string
+    end_ip   = string
   }))
   default = [
     {
-      name     = "default_rule"
+      name     = "default_rule" # TODO: Update the start and end IPs to be more restrictive
       start_ip = "0.0.0.0"
       end_ip   = "255.255.255.255"
     }
