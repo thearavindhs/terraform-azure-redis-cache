@@ -14,7 +14,8 @@ terraform {
   }
 }
 
-provider "azurerm" {
+# use this only when you want to run terraform plan and do not use it in the module
+# provider "azurerm" {
 
-  features {}
-}
+#   features {}
+# }
