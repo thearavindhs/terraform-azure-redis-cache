@@ -1,12 +1,19 @@
+variable "name" {
+  description = "The name of the Redis cache"
+  type        = string
+  nullable    = false
+}
+
 variable "environment" {
   description = "Environment for resource naming"
   type        = string
   nullable    = false
 }
 
-variable "default_location" {
-  description = "Default location for resources"
+variable "location" {
+  description = "location for resources"
   type        = string
+  # nullable    = false
   default     = "eastus"
 }
 
@@ -16,12 +23,6 @@ variable "default_tags" {
   default = {
     terraform = "true"
   }
-}
-
-variable "redis_cache_name" {
-  description = "The name of the Redis cache"
-  type        = string
-  nullable    = false
 }
 
 variable "sku_name" {

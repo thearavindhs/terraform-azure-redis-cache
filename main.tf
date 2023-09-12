@@ -1,18 +1,18 @@
 # create the unique suffix for to be used for all resources
-resource "random_id" "unique_suffix" {
-  byte_length = 4
-}
+# resource "random_id" "unique_suffix" {
+#   byte_length = 4
+# }
 
 # create the resource group
 resource "azurerm_resource_group" "redis_cache_resource_group" {
-  name     = "redis-cache-resource-group-${var.environment}-${random_id.unique_suffix.hex}"
-  location = var.default_location
+  name     = "redis-cache-resource-group-${module.data.resource-name-suffix}"
+  location = var.location
   tags     = var.default_tags
 }
 
 # create the redis cache
 resource "azurerm_redis_cache" "redis_cache" {
-  name                = var.redis_cache_name
+  name                = var.name
   location            = azurerm_resource_group.redis_cache_resource_group.location
   resource_group_name = azurerm_resource_group.redis_cache_resource_group.name
   sku_name            = var.sku_name
@@ -21,7 +21,7 @@ resource "azurerm_redis_cache" "redis_cache" {
   minimum_tls_version = var.minimum_tls_version
   redis_version       = var.redis_version
   tags = merge(var.default_tags, {
-    "name"           = var.redis_cache_name
+    "name"           = var.name
     "resource-group" = azurerm_resource_group.redis_cache_resource_group.name
   })
 
@@ -38,7 +38,7 @@ resource "azurerm_redis_cache" "redis_cache" {
 resource "azurerm_redis_firewall_rule" "redis_cache_firewall_rule" {
   for_each = { for rule in var.firewall_rules : rule.name => rule }
 
-  name                = "redis_firewall_${var.environment}_${each.key}_${random_id.unique_suffix.hex}"
+  name                = "redis_firewall_${each.key}_${module.data.resource-name-suffix}"
   redis_cache_name    = azurerm_redis_cache.redis_cache.name
   resource_group_name = azurerm_resource_group.redis_cache_resource_group.name
   start_ip            = each.value.start_ip
@@ -48,18 +48,18 @@ resource "azurerm_redis_firewall_rule" "redis_cache_firewall_rule" {
 # Create the Log Analytics Workspace
 resource "azurerm_log_analytics_workspace" "redis_cache_log_analytics" {
   # defaults to sku = "PerGB2018" and retention_in_days = 30
-  name                = "redis-cache-log-analytics-${var.environment}-${random_id.unique_suffix.hex}"
+  name                = "redis-cache-log-analytics-${module.data.resource-name-suffix}"
   location            = azurerm_resource_group.redis_cache_resource_group.location
   resource_group_name = azurerm_resource_group.redis_cache_resource_group.name
   tags = merge(var.default_tags, {
-    "name"           = "redis-cache-log-analytics-${var.environment}-${random_id.unique_suffix.hex}"
+    "name"           = "redis-cache-log-analytics-${module.data.resource-name-suffix}"
     "resource-group" = azurerm_resource_group.redis_cache_resource_group.name
   })
 }
 
 # Create the Diagnostic Setting for the Redis Cache
 resource "azurerm_monitor_diagnostic_setting" "redis_cache_diagnostic" {
-  name                       = "redis-cache-diagnostic-${var.environment}-${random_id.unique_suffix.hex}"
+  name                       = "redis-cache-diagnostic-${module.data.resource-name-suffix}"
   target_resource_id         = azurerm_redis_cache.redis_cache.id
   log_analytics_workspace_id = azurerm_log_analytics_workspace.redis_cache_log_analytics.id
 
