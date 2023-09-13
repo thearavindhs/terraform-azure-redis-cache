@@ -34,7 +34,7 @@ locals {
   lowercase-region = lower(local.region-map[var.location])
   
   # append the region code and random ID so that it can be used as a suffix across all resources
-  resource-name-suffix = "${local.environment-map[var.environment]}-${local.lowercase-region}-${random_id.random-id-4.hex}" # Use the shortened environment name - appends the region name and random ID
+  resource-name-suffix = "${local.lowercase-region}-${local.environment-map[var.environment]}-${random_id.random-id-4.hex}" # Use the shortened environment name - appends the region name and random ID
 }
 
 
