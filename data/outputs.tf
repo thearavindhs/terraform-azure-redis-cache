@@ -13,3 +13,7 @@ output "lowercase-region" {
 output "resource-name-suffix" {
     value = local.resource-name-suffix
 }
+
+output "random_id" {
+    value = random_id.random-id-4.hex
+}

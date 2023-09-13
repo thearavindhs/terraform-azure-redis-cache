@@ -38,7 +38,7 @@ resource "azurerm_redis_cache" "redis_cache" {
 resource "azurerm_redis_firewall_rule" "redis_cache_firewall_rule" {
   for_each = { for rule in var.firewall_rules : rule.name => rule }
 
-  name                = "redis_firewall_${each.key}_${module.data.resource-name-suffix}"
+  name                = "redis_firewall_${var.environment}_${each.key}_${module.data.random_id}"
   redis_cache_name    = azurerm_redis_cache.redis_cache.name
   resource_group_name = azurerm_resource_group.redis_cache_resource_group.name
   start_ip            = each.value.start_ip
